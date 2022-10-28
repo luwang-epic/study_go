@@ -13,6 +13,9 @@ go mod的使用：
         module github.com/luwang-epic/study_go/v2
         这样就不会影响之前的了，使用时需要import mv2 "github.com/jacksonyoudi/gomodone/v2"
 
+    如果一些包不想要外部访问，可以放到internal文件夹下，这个文件夹下的包外部都访问不到，
+    只能内部自己访问，但是internal包下的文件可以引用外面的包
+
     如果有人需要使用，就可以使用
         // 下载最新版本
         go get github.com/luwang-epic/study_go
