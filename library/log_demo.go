@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 // 日志功能
@@ -35,9 +36,8 @@ func LogDemo() {
 	// log.Panicln("这是一条会触发panic的日志")
 
 	// 也可以创建新的log对象
-	mylog := log.New(os.Stdout, "", log.Ldate | log.Lshortfile | log.Ltime)
+	mylog := log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime)
 	mylog.Println("新创建的日志对象")
-
 
 	// 设置logrus的配置
 	// Log as JSON instead of the default ASCII formatter.
@@ -61,13 +61,13 @@ func LogDemo() {
 	// Field机制：logrus鼓励通过Field机制进行精细化的、结构化的日志记录，而不是通过冗长的消息来记录日志。
 	logrus.WithFields(logrus.Fields{
 		"animal": "walrus",
-	  }).Info("A walrus appears")
+	}).Info("A walrus appears")
 
 	// A common pattern is to re-use fields between logging statements by re-using
 	// the logrus.Entry returned from WithFields()
 	contextLogger := logrus.WithFields(logrus.Fields{
 		"common": "this is a common field",
-		"other": "I also should be logged always",
+		"other":  "I also should be logged always",
 	})
 
 	contextLogger.Info("I'll be logged with common and other field")
@@ -76,4 +76,18 @@ func LogDemo() {
 	// 使用新的日志对象
 	var newlog = logrus.New()
 	newlog.Info("new log")
+}
+
+// zapLogDemo zap日志演示
+func zapLogDemo() {
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		log.Panicf("fail to new logger, err=%v", err)
+	}
+
+	defer func() {
+		_ = logger.Sync() // flushes buffer, if any
+	}()
+
+	logger.Info("hello go", zap.String("a", "a1"))
 }
