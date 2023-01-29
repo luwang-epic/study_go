@@ -24,7 +24,7 @@ type Server struct {
 
 // 创建一个服务器
 func NewServer(ip string, port int) *Server {
-	server := &Server {
+	server := &Server{
 		Ip: ip,
 		Port: port,
 		OnlineMap: make(map[string]*User),

@@ -38,7 +38,7 @@ func (t *Arith) Divide(args *Args, quo *Quotient) error {
 }
 
 func main() {
-	fmt.Println("rp server by http starting...")
+	fmt.Println("rpc server by http starting...")
 
 	arith := new(Arith)
 	// 注册了一个Arith的RPC服务

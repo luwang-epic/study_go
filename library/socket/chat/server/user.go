@@ -22,7 +22,7 @@ type User struct {
 func NewUser(conn net.Conn, server *Server) *User {
 	userAddr := conn.RemoteAddr().String()
 
-	user := &User {
+	user := &User{
 		Name: userAddr,
 		Addr: userAddr,
 		Channel: make(chan string),

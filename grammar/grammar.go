@@ -56,6 +56,17 @@ func main() {
 	// 调用函数输出
 	// go中的表达式可以加分号，也可以不加，建议不加
 	fmt.Println("hello, world")
+	//fmt.Println和直接println有什么区别
+	// println 是 builtin 包提供，语言内置，而 fmt.Println 来自标准库。
+	// println 是 builtin 包提供，语言内置，而 fmt.Println 来自标准库。
+	// 两个函数其实都是可以接纳任何类型的对象，而且不限个数variadic，但是println没有返回值，
+	// 而fmt.Println是有返回值的,第一个返回值是往输出上写入了多少个字节，第二个是含有可能的error。
+	// 内置print/println函数的调用不能接受数组和结构体参数。
+	// 对于组合类型的参数，内置的print/println函数将输出参数的底层值部的地址，而fmt和log标准库包中的打印函数将输出参数的字面值。
+	// 如果一个实参有String() string或Error() string方法，那么fmt和log标准库包里的打印函数在打印参数时会调用这两个方法，而内置的print/println函数则会忽略参数的这些方法。
+	// 内置的print/println函数不保证在未来的Go版本中继续存在。
+	// 因此 内置的println函数一般用于调试打印，之后删除；其他情况尽量使用fmt.println函数
+	println("hello, world")
 
 	// 定义变量
 	varAndConstDeclaration()
@@ -105,6 +116,8 @@ func main() {
 	// 锁
 	lockDemo()
 
+	buildInFunctionDemo()
+
 	// 协程机制，m:n模型，m个协程对应n个内核线程；需要有调度器来调度m个协程到n个内核线程中
 	// goroutine协程，会有多个调度器（可以配置GOMAXPROCES），每个调度器有一个队列，负责调度队列中的协程执行
 	// 也有一个全局的协程队列，防止需要执行的协程
@@ -112,6 +125,30 @@ func main() {
 	routineDemo()
 
 }
+
+/*********************内置函数**************************/
+func buildInFunctionDemo() {
+	closeDemo()
+}
+
+//close函数是一个内建函数， 用来关闭channel，这个channel要么是双向的， 要么是只写的（chan<- Type）。
+//这个方法应该只由发送者调用， 而不是接收者。 当最后一个发送的值都被接收者从关闭的channel(下简称为c)中接收时,
+//接下来所有接收的值都会非阻塞直接成功，返回channel元素的零值。
+//如下的代码： 如果c已经关闭（c中所有值都被接收）， x, ok := <- c， 读取ok将会得到false。
+func closeDemo() {
+	ch := make(chan int, 5)
+	for i := 0; i < 5; i++ {
+		ch <- i
+	}
+	close(ch)
+	//在close之后， 还可以读取， 不过在读取完之后， 再检测ok, 就是false了。也就是i=5的时候，e=0,ok=false
+	//如果不进行关闭就会导致阻塞进而抛出死锁
+	for i := 0; i < 10; i++ {
+		e, ok := <- ch
+		fmt.Printf("%v, %v\n", e, ok)
+	}
+}
+
 
 /*********************协程**************************/
 func routineDemo() {
@@ -204,9 +241,9 @@ func routineDemo() {
 	for data := range ccc {
 		fmt.Println("不断的从channel中读取数据:", data)
 	}
-	fmt.Println("range读取数据结果")
+	fmt.Println("range读取数据结束")
 
-	// 死循环
+	// 死循环 保持主线程不退出，主线程退出，协程也会退出
 	for {
 		time.Sleep(10 * time.Minute)
 	}
@@ -247,8 +284,8 @@ func fibonacci(c, quit chan int) {
 /**********************锁***************************/
 
 func lockDemo() {
+	// 结构体类型就相当于lock := sync.Mutex{}
 	var lock sync.Mutex
-
 	// 可以不进行显示的初始化，会自动初始化
 	// lock = sync.Mutex{}
 
@@ -382,7 +419,21 @@ func interfaceDemo() {
 	var w Writer
 	// w: pair<type:File, value: aaa>
 	w = r.(Writer) // 此处w r具有的type类型一直，都是File对象，因为File对象实现了Reader和Writer接口
+	w2 := Writer(f)
 	w.WriteFile(f.filename)
+	w2.WriteFile(f.filename)
+}
+
+type Flyer1 interface {
+	fly1()
+}
+type Flyer2 interface {
+	fly2()
+}
+// Flyer 接口嵌套
+type Flyer interface {
+	Flyer1
+	Flyer2
 }
 
 func baseInterface(arg interface{}) {
@@ -575,7 +626,7 @@ func exceptionDemo() {
 	fmt.Println("正常返回:", normalReturn, "异常信息:", err)
 	// 一般这么使用
 	if err != nil {
-		fmt.Println("出现错误")
+		fmt.Println("出现错误: " + err.Error())
 		return
 	}
 	// 否则正常执行
@@ -800,6 +851,18 @@ func funcDemo() {
 
 	r1, r2 = twoReturnValue2(1, "a")
 	fmt.Println(r1, r2)
+
+	// 闭包
+	/* nextNumber 为一个函数，函数 i 为 0 */
+	nextNumber := getSequence()
+	/* 调用 nextNumber 函数，i 变量自增 1 并返回 */
+	fmt.Println(nextNumber()) // 1
+	fmt.Println(nextNumber()) // 2
+	fmt.Println(nextNumber()) // 3
+	/* 创建新的函数 nextNumber1，并查看结果 */
+	nextNumber1 := getSequence()
+	fmt.Println(nextNumber1()) // 1
+	fmt.Println(nextNumber1()) // 2
 }
 
 // 返回一个返回值
@@ -834,6 +897,14 @@ func twoReturnValue3(a int, b string) (r1, r2 int) {
 
 	// 这个会将r1，r2的值返回
 	return
+}
+
+func getSequence() func() int {
+	i := 0
+	return func() int {
+		i += 1
+		return i
+	}
 }
 
 /****************************go语言的类型**********************************/
