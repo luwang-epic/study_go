@@ -47,12 +47,15 @@ func main() {
 	// OsDemo()
 
 	// 日志相关
-	LogDemo()
-	zapLogDemo()
+	//LogDemo()
+	//zapLogDemo()
 
 	// 系统调用相关
 	// ExecDemo()
 
 	// socket编程
 	//SocketDemo()
+
+	// context相关的
+	ContextDemo()
 }
