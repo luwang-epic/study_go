@@ -57,5 +57,11 @@ func main() {
 	//SocketDemo()
 
 	// context相关的
-	ContextDemo()
+	//ContextDemo()
+
+	//SelectDemo()
+
+	//HeapDemo()
+
+	CmdDemo()
 }

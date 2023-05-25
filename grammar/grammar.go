@@ -58,7 +58,6 @@ func main() {
 	fmt.Println("hello, world")
 	//fmt.Println和直接println有什么区别
 	// println 是 builtin 包提供，语言内置，而 fmt.Println 来自标准库。
-	// println 是 builtin 包提供，语言内置，而 fmt.Println 来自标准库。
 	// 两个函数其实都是可以接纳任何类型的对象，而且不限个数variadic，但是println没有返回值，
 	// 而fmt.Println是有返回值的,第一个返回值是往输出上写入了多少个字节，第二个是含有可能的error。
 	// 内置print/println函数的调用不能接受数组和结构体参数。
