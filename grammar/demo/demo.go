@@ -2,10 +2,17 @@ package main
 
 import (
 	"fmt"
+	"hash/fnv"
+	"strconv"
 	"syscall"
 )
 
 func main() {
+
+	s := "blsdebug"
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	println(strconv.Itoa(int(h.Sum32())))
 
 	fs := syscall.Statfs_t{}
 	syscall.Statfs("/", &fs)
