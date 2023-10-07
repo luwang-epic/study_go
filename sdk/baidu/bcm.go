@@ -12,7 +12,7 @@ import (
 func main() {
 	ak := "8600e073a6524e4498846b5b0f8799b6"
 	sk := "41115cd08ebe47b19a5729c3a2c441eb"
-	endpoint := "http://gzbh-sandbox23-6271.gzbh.baidu.com:8869"
+	endpoint := "http://xxxx:8869"
 	bcmClient, _ := bcm.NewClient(ak, sk, endpoint)
 
 	dimensions := map[string]string{
